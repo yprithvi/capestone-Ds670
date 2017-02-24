@@ -1,574 +1,327 @@
 {
   "paragraphs": [
     {
-      "text": "import org.apache.spark.streaming._\nimport org.apache.spark.streaming.twitter._\nimport org.apache.spark.storage.StorageLevel\nimport scala.io.Source\nimport scala.collection.mutable.HashMap\nimport java.io.File\nimport org.apache.log4j.Logger\nimport org.apache.log4j.Level\nimport sys.process.stringSeqToProcess\n",
-      "dateUpdated": "Jan 26, 2017 7:44:11 PM",
+      "text": "%pyspark\nfrom pandas import Series, DataFrame\nimport numpy as np, pandas as pd\ndf \u003d DataFrame([[1.4,np.nan],[7.1,-4.5],\n               [np.nan,np.nan],[0.75,-1.3]],\n               index\u003d[\u0027a\u0027,\u0027b\u0027,\u0027c\u0027,\u0027d\u0027],\n               columns\u003d[\u0027one\u0027,\u0027two\u0027])\ndf",
+      "user": "anonymous",
+      "dateUpdated": "Feb 23, 2017 6:47:35 PM",
       "config": {
         "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
-        },
         "enabled": true,
-        "editorMode": "ace/mode/scala"
+        "results": {},
+        "editorSetting": {
+          "language": "python"
+        },
+        "editorMode": "ace/mode/python"
       },
       "settings": {
         "params": {},
         "forms": {}
       },
-      "jobName": "paragraph_1485472560386_-710948012",
-      "id": "20170126-181600_1170789956",
-      "result": {
+      "results": {
         "code": "SUCCESS",
-        "type": "TEXT",
-        "msg": "\nimport org.apache.spark.streaming._\n\nimport org.apache.spark.streaming.twitter._\n\nimport org.apache.spark.storage.StorageLevel\n\nimport scala.io.Source\n\nimport scala.collection.mutable.HashMap\n\nimport java.io.File\n\nimport org.apache.log4j.Logger\n\nimport org.apache.log4j.Level\n\nimport sys.process.stringSeqToProcess\n"
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "    one  two\na  1.40  NaN\nb  7.10 -4.5\nc   NaN  NaN\nd  0.75 -1.3\n"
+          }
+        ]
       },
-      "dateCreated": "Jan 26, 2017 6:16:00 AM",
-      "dateStarted": "Jan 26, 2017 7:44:11 PM",
-      "dateFinished": "Jan 26, 2017 7:44:32 PM",
+      "apps": [],
+      "jobName": "paragraph_1487893064401_-957749714",
+      "id": "20170223-183744_1156690523",
+      "dateCreated": "Feb 23, 2017 6:37:44 PM",
+      "dateStarted": "Feb 23, 2017 6:47:35 PM",
+      "dateFinished": "Feb 23, 2017 6:48:13 PM",
       "status": "FINISHED",
       "progressUpdateIntervalMs": 500
     },
     {
-      "text": "\n/** Configures the Oauth Credentials for accessing Twitter */\ndef configureTwitterCredentials(apiKey: String, apiSecret: String, accessToken: String, accessTokenSecret: String) {\n  val configs \u003d new HashMap[String, String] ++\u003d Seq(\n    \"apiKey\" -\u003e apiKey, \"apiSecret\" -\u003e apiSecret, \"accessToken\" -\u003e accessToken, \"accessTokenSecret\" -\u003e accessTokenSecret)\n  println(\"Configuring Twitter OAuth\")\n  configs.foreach{ case(key, value) \u003d\u003e\n    if (value.trim.isEmpty) {\n      throw new Exception(\"Error setting authentication - value for \" + key + \" not set\")\n    }\n    val fullKey \u003d \"twitter4j.oauth.\" + key.replace(\"api\", \"consumer\")\n    System.setProperty(fullKey, value.trim)\n    println(\"\\tProperty \" + fullKey + \" set as [\" + value.trim + \"]\")\n  }\n  println()\n}\n",
-      "dateUpdated": "Jan 26, 2017 7:44:11 PM",
+      "text": "%pyspark\nprint(df.sum())\nprint (df.sum(axis\u003d1))\nprint(df.mean(axis\u003d1,skipna\u003dFalse))\nprint (df.idxmax())\nprint(df.describe())\nobj \u003d Series([\u0027a\u0027,\u0027a\u0027,\u0027b\u0027,\u0027c\u0027] * 4)\nobj\nobj.describe()",
+      "user": "anonymous",
+      "dateUpdated": "Feb 23, 2017 6:50:50 PM",
       "config": {
         "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
-        },
         "enabled": true,
-        "editorMode": "ace/mode/scala"
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485472822206_1744117751",
-      "id": "20170126-182022_413628981",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TEXT",
-        "msg": "\nconfigureTwitterCredentials: (apiKey: String, apiSecret: String, accessToken: String, accessTokenSecret: String)Unit\n"
-      },
-      "dateCreated": "Jan 26, 2017 6:20:22 AM",
-      "dateStarted": "Jan 26, 2017 7:44:12 PM",
-      "dateFinished": "Jan 26, 2017 7:44:33 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "\n// Configure Twitter credentials\nval apiKey \u003d \"fVoraNUIkkFD99P5WTQvZ2cMG\"\nval apiSecret \u003d \"AsbRE74j5OCwLOgcuD4G1jz6SyxzugfZaw30IjLpUkYD2YZYYa\"\nval accessToken \u003d \"165191807-gLdy7lrUMZCmQYIgudIoUkyORmtmCBiEJ2ERNtm5\"\nval accessTokenSecret \u003d \"NTaCS3lb1PTgDsPiQ7zRw624ZgSVbfutv5RCCJIgMdwun\"\nconfigureTwitterCredentials(apiKey, apiSecret, accessToken, accessTokenSecret)\n",
-      "dateUpdated": "Jan 26, 2017 7:44:11 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
-        },
-        "enabled": true,
-        "editorMode": "ace/mode/scala"
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485474872801_1286610793",
-      "id": "20170126-185432_1042863838",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TEXT",
-        "msg": "\napiKey: String \u003d fVoraNUIkkFD99P5WTQvZ2cMG\n\napiSecret: String \u003d AsbRE74j5OCwLOgcuD4G1jz6SyxzugfZaw30IjLpUkYD2YZYYa\n\naccessToken: String \u003d 165191807-gLdy7lrUMZCmQYIgudIoUkyORmtmCBiEJ2ERNtm5\n\naccessTokenSecret: String \u003d NTaCS3lb1PTgDsPiQ7zRw624ZgSVbfutv5RCCJIgMdwun\nConfiguring Twitter OAuth\n\tProperty twitter4j.oauth.consumerKey set as [fVoraNUIkkFD99P5WTQvZ2cMG]\n\tProperty twitter4j.oauth.accessToken set as [165191807-gLdy7lrUMZCmQYIgudIoUkyORmtmCBiEJ2ERNtm5]\n\tProperty twitter4j.oauth.consumerSecret set as [AsbRE74j5OCwLOgcuD4G1jz6SyxzugfZaw30IjLpUkYD2YZYYa]\n\tProperty twitter4j.oauth.accessTokenSecret set as [NTaCS3lb1PTgDsPiQ7zRw624ZgSVbfutv5RCCJIgMdwun]\n\n"
-      },
-      "dateCreated": "Jan 26, 2017 6:54:32 AM",
-      "dateStarted": "Jan 26, 2017 7:44:32 PM",
-      "dateFinished": "Jan 26, 2017 7:44:35 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "import org.apache.spark.{ SparkConf, SparkContext}\nimport org.apache.spark.streaming._\nimport org.apache.spark.streaming.twitter._\nimport org.apache.spark.SparkContext._\n",
-      "dateUpdated": "Jan 26, 2017 7:44:11 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
-        },
-        "enabled": true,
-        "editorMode": "ace/mode/scala"
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485474903551_-187164673",
-      "id": "20170126-185503_607443244",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TEXT",
-        "msg": "\nimport org.apache.spark.{SparkConf, SparkContext}\n\nimport org.apache.spark.streaming._\n\nimport org.apache.spark.streaming.twitter._\n\nimport org.apache.spark.SparkContext._\n"
-      },
-      "dateCreated": "Jan 26, 2017 6:55:03 AM",
-      "dateStarted": "Jan 26, 2017 7:44:34 PM",
-      "dateFinished": "Jan 26, 2017 7:44:37 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "val ssc \u003d new StreamingContext(sc, Seconds(2))\n\nval tweets \u003d TwitterUtils.createStream(ssc, None)\nval twt \u003d tweets.window(Seconds(10))",
-      "dateUpdated": "Jan 26, 2017 7:44:11 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
-        },
-        "enabled": true,
-        "editorMode": "ace/mode/scala"
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485474916604_1606180598",
-      "id": "20170126-185516_660046110",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TEXT",
-        "msg": "\nssc: org.apache.spark.streaming.StreamingContext \u003d org.apache.spark.streaming.StreamingContext@711b9e91\n\ntweets: org.apache.spark.streaming.dstream.ReceiverInputDStream[twitter4j.Status] \u003d org.apache.spark.streaming.twitter.TwitterInputDStream@57546f92\n\ntwt: org.apache.spark.streaming.dstream.DStream[twitter4j.Status] \u003d org.apache.spark.streaming.dstream.WindowedDStream@204b2af1\n"
-      },
-      "dateCreated": "Jan 26, 2017 6:55:16 AM",
-      "dateStarted": "Jan 26, 2017 7:44:36 PM",
-      "dateFinished": "Jan 26, 2017 7:44:39 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "case class Tweet(createdAt:Long, text:String)\n\nval tweet \u003d twt.map(status\u003d\u003e\n  Tweet(status.getCreatedAt().getTime()/1000, status.getText())\n)",
-      "dateUpdated": "Jan 26, 2017 7:44:11 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
-        },
-        "enabled": true,
-        "editorMode": "ace/mode/scala"
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485476688117_1741761043",
-      "id": "20170126-192448_1788666992",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TEXT",
-        "msg": "\ndefined class Tweet\n\ntweet: org.apache.spark.streaming.dstream.DStream[Tweet] \u003d org.apache.spark.streaming.dstream.MappedDStream@7b100480\n"
-      },
-      "dateCreated": "Jan 26, 2017 7:24:48 AM",
-      "dateStarted": "Jan 26, 2017 7:44:38 PM",
-      "dateFinished": "Jan 26, 2017 7:44:42 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "val sqlContext\u003d new org.apache.spark.sql.SQLContext(sc)\nimport sqlContext.implicits._",
-      "dateUpdated": "Jan 26, 2017 7:44:12 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
-        },
-        "enabled": true,
-        "editorMode": "ace/mode/scala"
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485474950710_1271879777",
-      "id": "20170126-185550_2026925137",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TEXT",
-        "msg": "\nwarning: there was one deprecation warning; re-run with -deprecation for details\n\nsqlContext: org.apache.spark.sql.SQLContext \u003d org.apache.spark.sql.SQLContext@4ec91a3d\n\nimport sqlContext.implicits._\n"
-      },
-      "dateCreated": "Jan 26, 2017 6:55:50 AM",
-      "dateStarted": "Jan 26, 2017 7:44:40 PM",
-      "dateFinished": "Jan 26, 2017 7:44:44 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "tweet.foreachRDD(rdd\u003d\u003erdd.toDF.registerTempTable(\"tweets\"))\n\n",
-      "dateUpdated": "Jan 26, 2017 7:44:12 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
-        },
-        "enabled": true,
-        "editorMode": "ace/mode/scala"
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485475901431_-1901744811",
-      "id": "20170126-191141_480721098",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TEXT",
-        "msg": "\nwarning: there was one deprecation warning; re-run with -deprecation for details\n"
-      },
-      "dateCreated": "Jan 26, 2017 7:11:41 AM",
-      "dateStarted": "Jan 26, 2017 7:44:42 PM",
-      "dateFinished": "Jan 26, 2017 7:44:46 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "twt.print",
-      "dateUpdated": "Jan 26, 2017 7:44:12 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
-        },
-        "enabled": true,
-        "editorMode": "ace/mode/scala"
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485476297961_1018249221",
-      "id": "20170126-191817_1758923832",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TEXT",
-        "msg": ""
-      },
-      "dateCreated": "Jan 26, 2017 7:18:17 AM",
-      "dateStarted": "Jan 26, 2017 7:44:45 PM",
-      "dateFinished": "Jan 26, 2017 7:44:47 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "ssc.start()",
-      "dateUpdated": "Jan 26, 2017 7:44:12 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
-        },
-        "enabled": true,
-        "editorMode": "ace/mode/scala"
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485477246233_1277178129",
-      "id": "20170126-193406_845545842",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TEXT",
-        "msg": ""
-      },
-      "dateCreated": "Jan 26, 2017 7:34:06 AM",
-      "dateStarted": "Jan 26, 2017 7:44:46 PM",
-      "dateFinished": "Jan 26, 2017 7:44:48 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "%sql select * from tweets where text like \u0027%girl%\u0027 limit 10",
-      "dateUpdated": "Jan 26, 2017 7:46:19 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [
-            {
-              "name": "createdAt",
-              "index": 0.0,
-              "aggr": "sum"
-            }
-          ],
-          "values": [
-            {
-              "name": "text",
-              "index": 1.0,
-              "aggr": "sum"
-            }
-          ],
-          "groups": [],
-          "scatter": {
-            "xAxis": {
-              "name": "createdAt",
-              "index": 0.0,
-              "aggr": "sum"
-            },
-            "yAxis": {
-              "name": "text",
-              "index": 1.0,
-              "aggr": "sum"
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 508.0,
+              "optionOpen": false
             }
           }
         },
-        "enabled": true,
-        "editorMode": "ace/mode/sql"
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485477252010_895674142",
-      "id": "20170126-193412_155817760",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TABLE",
-        "msg": "createdAt\ttext\n1485477962\t#hostel girls sex young nude male stars https://t.co/kNYQwlijPq\n1485477965\t@confusinggirl_ já a gente......\n1485477969\tRT @hotukgirls3006: The gorgeous ✨@RoxyCoxModel ✨#RT #follow\n@lee_ecclestone @tterb1407 @flynn_promo @PROMOGIRLSUK @promolatina… \n1485477971\tvideo emo boy to girl transform https://t.co/fYpGROB0ii\n"
-      },
-      "dateCreated": "Jan 26, 2017 7:34:12 AM",
-      "dateStarted": "Jan 26, 2017 7:46:14 PM",
-      "dateFinished": "Jan 26, 2017 7:46:14 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "%sql select createdAt, count(1) from tweets group by createdAt order by createdAt\n",
-      "dateUpdated": "Jan 26, 2017 7:46:38 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
+        "editorSetting": {
+          "language": "python"
         },
-        "enabled": true,
-        "editorMode": "ace/mode/sql"
+        "editorMode": "ace/mode/python"
       },
       "settings": {
         "params": {},
         "forms": {}
       },
-      "jobName": "paragraph_1485477534389_-1704475894",
-      "id": "20170126-193854_775634596",
-      "result": {
+      "results": {
         "code": "SUCCESS",
-        "type": "TABLE",
-        "msg": "createdAt\tcount(1)\n1485477985\t1\n1485477986\t28\n1485477987\t42\n1485477988\t39\n1485477989\t44\n1485477990\t34\n1485477991\t42\n1485477992\t44\n1485477993\t39\n1485477994\t38\n1485477995\t44\n"
-      },
-      "dateCreated": "Jan 26, 2017 7:38:54 AM",
-      "dateStarted": "Jan 26, 2017 7:46:38 PM",
-      "dateFinished": "Jan 26, 2017 7:46:41 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "def sentiment(s:String) : String \u003d {\n    val positive \u003d Array(\"like\", \"love\", \"good\", \"great\", \"happy\", \"cool\", \"the\", \"one\", \"that\")\n    val negative \u003d Array(\"hate\", \"bad\", \"stupid\", \"is\")\n\n    var st \u003d 0;\n\n    val words \u003d s.split(\" \")    \n    positive.foreach(p \u003d\u003e\n        words.foreach(w \u003d\u003e\n            if(p\u003d\u003dw) st \u003d st+1\n        )\n    )\n\n    negative.foreach(p\u003d\u003e\n        words.foreach(w\u003d\u003e\n            if(p\u003d\u003dw) st \u003d st-1\n        )\n    )\n    if(st\u003e0)\n        \"positivie\"\n    else if(st\u003c0)\n        \"negative\"\n    else\n        \"neutral\"\n}\n\n// Below line works only in spark 1.3.0.\n// For spark 1.1.x and spark 1.2.x,\n// use sqlc.registerFunction(\"sentiment\", sentiment _) instead.\nsqlc.udf.register(\"sentiment\", sentiment _)",
-      "dateUpdated": "Jan 26, 2017 7:47:59 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
-        },
-        "enabled": true,
-        "editorMode": "ace/mode/scala"
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485477764901_852350758",
-      "id": "20170126-194244_1198866209",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TEXT",
-        "msg": "\nsentiment: (s: String)String\n\nres15: org.apache.spark.sql.expressions.UserDefinedFunction \u003d UserDefinedFunction(\u003cfunction1\u003e,StringType,Some(List(StringType)))\n"
-      },
-      "dateCreated": "Jan 26, 2017 7:42:44 AM",
-      "dateStarted": "Jan 26, 2017 7:47:59 PM",
-      "dateFinished": "Jan 26, 2017 7:48:01 PM",
-      "status": "FINISHED",
-      "progressUpdateIntervalMs": 500
-    },
-    {
-      "text": "%sql select sentiment(text), count(1) from tweets where text like \u0027%girl%\u0027 group by sentiment(text)\n",
-      "dateUpdated": "Jan 26, 2017 7:49:19 PM",
-      "config": {
-        "colWidth": 12.0,
-        "graph": {
-          "mode": "pieChart",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [
-            {
-              "name": "UDF(text)",
-              "index": 0.0,
-              "aggr": "sum"
-            }
-          ],
-          "values": [
-            {
-              "name": "count(1)",
-              "index": 1.0,
-              "aggr": "sum"
-            }
-          ],
-          "groups": [],
-          "scatter": {
-            "xAxis": {
-              "name": "UDF(text)",
-              "index": 0.0,
-              "aggr": "sum"
-            },
-            "yAxis": {
-              "name": "count(1)",
-              "index": 1.0,
-              "aggr": "sum"
-            }
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "one    9.25\ntwo   -5.80\ndtype: float64\na    1.40\nb    2.60\nc     NaN\nd   -0.55\ndtype: float64\na      NaN\nb    1.300\nc      NaN\nd   -0.275\ndtype: float64\none    b\ntwo    d\ndtype: object\n            one       two\ncount  3.000000  2.000000\nmean   3.083333 -2.900000\nstd    3.493685  2.262742\nmin    0.750000 -4.500000\n25%    1.075000 -3.700000\n50%    1.400000 -2.900000\n75%    4.250000 -2.100000\nmax    7.100000 -1.300000\ncount     16\nunique     3\ntop        a\nfreq       8\ndtype: object\n"
           }
-        },
-        "enabled": true
+        ]
       },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "jobName": "paragraph_1485478079260_928929992",
-      "id": "20170126-194759_2008804157",
-      "result": {
-        "code": "SUCCESS",
-        "type": "TABLE",
-        "msg": "UDF(text)\tcount(1)\nneutral\t6\npositivie\t1\n"
-      },
-      "dateCreated": "Jan 26, 2017 7:47:59 PM",
-      "dateStarted": "Jan 26, 2017 7:49:10 PM",
-      "dateFinished": "Jan 26, 2017 7:49:11 PM",
+      "apps": [],
+      "jobName": "paragraph_1487893655013_-1486920658",
+      "id": "20170223-184735_48711957",
+      "dateCreated": "Feb 23, 2017 6:47:35 PM",
+      "dateStarted": "Feb 23, 2017 6:50:33 PM",
+      "dateFinished": "Feb 23, 2017 6:50:33 PM",
       "status": "FINISHED",
       "progressUpdateIntervalMs": 500
     },
     {
-      "text": "",
-      "dateUpdated": "Jan 26, 2017 7:48:27 PM",
+      "text": "%pyspark\nfrom pandas_datareader import data as  web\nall_data \u003d {}\nfor ticker in [\u0027AAPL\u0027,\u0027IBM\u0027,\u0027MSFT\u0027,\u0027GOOG\u0027]:\n  all_data[ticker] \u003d web.get_data_yahoo(ticker)\nprice \u003d DataFrame({tic: data[\u0027Adj Close\u0027]\n    for tic, data in all_data.items()})\nvolume \u003d DataFrame({tic: data[\u0027Volume\u0027]\n    for tic, data in all_data.items()})\nreturns \u003d price.pct_change()",
+      "user": "anonymous",
+      "dateUpdated": "Feb 23, 2017 6:52:07 PM",
       "config": {
         "colWidth": 12.0,
-        "graph": {
-          "mode": "table",
-          "height": 300.0,
-          "optionOpen": false,
-          "keys": [],
-          "values": [],
-          "groups": [],
-          "scatter": {}
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python"
         },
-        "enabled": true
+        "editorMode": "ace/mode/python"
       },
       "settings": {
         "params": {},
         "forms": {}
       },
-      "jobName": "paragraph_1485478096995_-231457367",
-      "id": "20170126-194816_1927098758",
-      "dateCreated": "Jan 26, 2017 7:48:16 PM",
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "jobName": "paragraph_1487893757982_-1510466438",
+      "id": "20170223-184917_986138751",
+      "dateCreated": "Feb 23, 2017 6:49:17 PM",
+      "dateStarted": "Feb 23, 2017 6:52:07 PM",
+      "dateFinished": "Feb 23, 2017 6:52:08 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\nall_data",
+      "user": "anonymous",
+      "dateUpdated": "Feb 23, 2017 6:54:08 PM",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python"
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "{\u0027GOOG\u0027:                   Open        High         Low       Close    Volume  \\\nDate                                                                   \n2010-01-04  626.951088  629.511067  624.241073  626.751061   3927000   \n2010-01-05  627.181073  627.841071  621.541045  623.991055   6031900   \n2010-01-06  625.861078  625.861078  606.361042  608.261023   7987100   \n2010-01-07  609.401025  610.001045  592.651008  594.101005  12876600   \n2010-01-08  592.000997  603.251034  589.110988  602.021036   9483900   \n2010-01-11  604.461060  604.461060  594.041028  601.111020  14479800   \n2010-01-12  597.651011  598.161034  588.001007  590.481036   9742900   \n2010-01-13  576.490965  588.381027  573.900966  587.090991  13041800   \n2010-01-14  583.900972  594.200988  582.811024  589.850997   8511900   \n2010-01-15  593.341025  593.561024  578.041006  580.000965  10909600   \n2010-01-19  581.201005  590.420997  576.290999  587.620986   8665700   \n2010-01-20  585.981009  585.981009  575.290986  580.411005   6525700   \n2010-01-21  583.441002  586.821000  572.251003  582.980970  12662600   \n2010-01-22  564.500980  570.600979  534.860888  550.010933  13651700   \n2010-01-25  546.590929  549.880931  535.510900  540.000941   8872800   \n2010-01-26  537.970896  549.600954  536.290913  542.420931   8743600   \n2010-01-27  541.270944  547.650920  535.310934  542.100949   7958400   \n2010-01-28  544.490921  547.000908  530.600893  534.290888   6482300   \n2010-01-29  538.490905  540.990906  525.610876  529.940896   8311900   \n2010-02-01  534.600945  535.810910  530.300883  533.020884   4518400   \n2010-02-02  534.960932  534.960932  527.610902  531.120903   8223000   \n2010-02-03  528.670892  542.100949  528.230894  540.820899   6020500   \n2010-02-04  537.000902  538.000915  525.560885  526.780897   6780600   \n2010-02-05  528.400902  533.500888  522.460925  531.290910   6335600   \n2010-02-08  532.500936  542.000905  531.530881  533.470930   5408700   \n2010-02-09  539.540909  541.530949  535.070901  536.440949   5660200   \n2010-02-10  534.070888  537.790902  527.690913  534.450909   5369000   \n2010-02-11  533.320894  540.490931  529.500898  536.400943   4838000   \n2010-02-12  532.970893  537.150938  530.500910  533.120928   4576400   \n2010-02-16  536.870900  544.130933  534.300935  541.300902   7336100   \n...                ...         ...         ...         ...       ...   \n2017-01-10  807.859985  809.130005  803.510010  804.789978   1174300   \n2017-01-11  805.000000  808.150024  801.369995  807.909973   1057900   \n2017-01-12  807.140015  807.390015  799.169983  806.359985   1351000   \n2017-01-13  807.479980  811.223999  806.690002  807.880005   1090100   \n2017-01-17  807.080017  807.140015  800.369995  804.609985   1355800   \n2017-01-18  805.809998  806.205017  800.989990  806.070007   1293300   \n2017-01-19  805.119995  809.479980  801.799988  802.174988    912000   \n2017-01-20  806.909973  806.909973  801.690002  805.020020   1645000   \n2017-01-23  807.250000  820.869995  803.739990  819.309998   1901600   \n2017-01-24  822.299988  825.900024  817.820984  823.869995   1461000   \n2017-01-25  829.619995  835.770020  825.059998  835.669983   1494500   \n2017-01-26  837.809998  838.000000  827.010010  832.150024   2734400   \n2017-01-27  834.710022  841.950012  820.440002  823.309998   2951800   \n2017-01-30  814.659973  815.840027  799.799988  802.320007   3228900   \n2017-01-31  796.859985  801.250000  790.520020  796.789978   2143500   \n2017-02-01  799.679993  801.190002  791.190002  795.695007   2023300   \n2017-02-02  793.799988  802.700012  792.000000  798.530029   1525800   \n2017-02-03  802.989990  806.000000  800.369995  801.489990   1460400   \n2017-02-06  799.700012  801.669983  795.250000  801.340027   1174200   \n2017-02-07  803.989990  810.500000  801.780029  806.969971   1235200   \n2017-02-08  807.000000  811.840027  803.190002  808.380005   1155300   \n2017-02-09  809.510010  810.659973  804.539978  809.559998    989700   \n2017-02-10  811.700012  815.250000  809.780029  813.669983   1129100   \n2017-02-13  816.000000  820.958984  815.489990  819.239990   1198100   \n2017-02-14  819.000000  823.000000  816.000000  820.450012   1053600   \n2017-02-15  819.359985  823.000000  818.469971  818.979980   1304000   \n2017-02-16  819.929993  824.400024  818.979980  824.159973   1281700   \n2017-02-17  823.020020  828.070007  821.655029  828.070007   1597800   \n2017-02-21  828.659973  833.450012  828.349976  831.659973   1247700   \n2017-02-22  828.659973  833.250000  828.640015  830.760010    982900   \n\n             Adj Close  \nDate                    \n2010-01-04  313.062468  \n2010-01-05  311.683844  \n2010-01-06  303.826685  \n2010-01-07  296.753749  \n2010-01-08  300.709808  \n2010-01-11  300.255255  \n2010-01-12  294.945572  \n2010-01-13  293.252243  \n2010-01-14  294.630868  \n2010-01-15  289.710772  \n2010-01-19  293.516976  \n2010-01-20  289.915587  \n2010-01-21  291.199286  \n2010-01-22  274.730736  \n2010-01-25  269.730740  \n2010-01-26  270.939526  \n2010-01-27  270.779695  \n2010-01-28  266.878565  \n2010-01-29  264.705742  \n2010-02-01  266.244198  \n2010-02-02  265.295156  \n2010-02-03  270.140309  \n2010-02-04  263.127321  \n2010-02-05  265.380075  \n2010-02-08  266.468996  \n2010-02-09  267.952522  \n2010-02-10  266.958496  \n2010-02-11  267.932539  \n2010-02-12  266.294170  \n2010-02-16  270.380071  \n...                ...  \n2017-01-10  804.789978  \n2017-01-11  807.909973  \n2017-01-12  806.359985  \n2017-01-13  807.880005  \n2017-01-17  804.609985  \n2017-01-18  806.070007  \n2017-01-19  802.174988  \n2017-01-20  805.020020  \n2017-01-23  819.309998  \n2017-01-24  823.869995  \n2017-01-25  835.669983  \n2017-01-26  832.150024  \n2017-01-27  823.309998  \n2017-01-30  802.320007  \n2017-01-31  796.789978  \n2017-02-01  795.695007  \n2017-02-02  798.530029  \n2017-02-03  801.489990  \n2017-02-06  801.340027  \n2017-02-07  806.969971  \n2017-02-08  808.380005  \n2017-02-09  809.559998  \n2017-02-10  813.669983  \n2017-02-13  819.239990  \n2017-02-14  820.450012  \n2017-02-15  818.979980  \n2017-02-16  824.159973  \n2017-02-17  828.070007  \n2017-02-21  831.659973  \n2017-02-22  830.760010  \n\n[1797 rows x 6 columns], \u0027AAPL\u0027:                   Open        High         Low       Close     Volume  \\\nDate                                                                    \n2010-01-04  213.429998  214.499996  212.380001  214.009998  123432400   \n2010-01-05  214.599998  215.589994  213.249994  214.379993  150476200   \n2010-01-06  214.379993  215.230000  210.750004  210.969995  138040000   \n2010-01-07  211.750000  212.000006  209.050005  210.580000  119282800   \n2010-01-08  210.299994  212.000006  209.060005  211.980005  111902700   \n2010-01-11  212.799997  213.000002  208.450005  210.110003  115557400   \n2010-01-12  209.189995  209.769995  206.419998  207.720001  148614900   \n2010-01-13  207.870005  210.929995  204.099998  210.650002  151473000   \n2010-01-14  210.110003  210.459997  209.020004  209.430000  108223500   \n2010-01-15  210.929995  211.599997  205.869999  205.930000  148516900   \n2010-01-19  208.330002  215.189999  207.240004  215.039995  182501900   \n2010-01-20  214.910006  215.549994  209.500002  211.730000  153038200   \n2010-01-21  212.079994  213.309996  207.210003  208.069996  152038600   \n2010-01-22  206.780006  207.499996  197.160000  197.750000  220441900   \n2010-01-25  202.510002  204.699999  200.190002  203.070002  266424900   \n2010-01-26  205.950001  213.710005  202.580004  205.940001  466777500   \n2010-01-27  206.849995  210.580000  199.530001  207.880005  430642100   \n2010-01-28  204.930004  205.500004  198.699995  199.289995  293375600   \n2010-01-29  201.079996  202.199995  190.250002  192.060003  311488100   \n2010-02-01  192.369997  196.000000  191.299999  194.729998  187469100   \n2010-02-02  195.909998  196.319994  193.379993  195.859997  174585600   \n2010-02-03  195.169994  200.200003  194.420004  199.229994  153832000   \n2010-02-04  196.730003  198.370001  191.570005  192.050003  189413000   \n2010-02-05  192.630003  196.000000  190.850002  195.460001  212576700   \n2010-02-08  195.690006  197.880003  193.999994  194.119997  119567700   \n2010-02-09  196.419996  197.499994  194.749998  196.190004  158221700   \n2010-02-10  195.889997  196.600000  194.260000  195.120007   92590400   \n2010-02-11  194.880001  199.750006  194.059996  198.669994  137586400   \n2010-02-12  198.109995  201.639996  195.500002  200.379993  163867200   \n2010-02-16  201.940002  203.690002  201.520006  203.399996  135934400   \n...                ...         ...         ...         ...        ...   \n2017-01-10  118.769997  119.379997  118.300003  119.110001   24462100   \n2017-01-11  118.739998  119.930000  118.599998  119.750000   27588600   \n2017-01-12  118.900002  119.300003  118.209999  119.250000   27086200   \n2017-01-13  119.110001  119.620003  118.809998  119.040001   26111900   \n2017-01-17  118.339996  120.239998  118.220001  120.000000   34439800   \n2017-01-18  120.000000  120.500000  119.709999  119.989998   23713000   \n2017-01-19  119.400002  120.089996  119.370003  119.779999   25597300   \n2017-01-20  120.449997  120.449997  119.730003  120.000000   32597900   \n2017-01-23  120.000000  120.809998  119.769997  120.080002   22050200   \n2017-01-24  119.550003  120.099998  119.500000  119.970001   23211000   \n2017-01-25  120.419998  122.099998  120.279999  121.879997   32377600   \n2017-01-26  121.669998  122.440002  121.599998  121.940002   26337600   \n2017-01-27  122.139999  122.349998  121.599998  121.949997   20562900   \n2017-01-30  120.930000  121.629997  120.660004  121.629997   30377500   \n2017-01-31  121.150002  121.389999  120.620003  121.349998   49201000   \n2017-02-01  127.029999  130.490005  127.010002  128.750000  111985000   \n2017-02-02  127.980003  129.389999  127.779999  128.529999   33710400   \n2017-02-03  128.309998  129.190002  128.160004  129.080002   24507300   \n2017-02-06  129.130005  130.500000  128.899994  130.289993   26845900   \n2017-02-07  130.539993  132.089996  130.449997  131.529999   38183800   \n2017-02-08  131.350006  132.220001  131.220001  132.039993   23004100   \n2017-02-09  131.649994  132.449997  131.119995  132.419998   28349900   \n2017-02-10  132.460007  132.940002  132.050003  132.119995   20065500   \n2017-02-13  133.080002  133.820007  132.750000  133.289993   23035400   \n2017-02-14  133.470001  135.089996  133.250000  135.020004   32815500   \n2017-02-15  135.520004  136.270004  134.619995  135.509995   35501600   \n2017-02-16  135.669998  135.899994  134.839996  135.350006   22118000   \n2017-02-17  135.100006  135.830002  135.100006  135.720001   22084500   \n2017-02-21  136.229996  136.750000  135.979996  136.699997   24265100   \n2017-02-22  136.429993  137.119995  136.110001  137.110001   20745300   \n\n             Adj Close  \nDate                    \n2010-01-04   27.727039  \n2010-01-05   27.774976  \n2010-01-06   27.333178  \n2010-01-07   27.282650  \n2010-01-08   27.464034  \n2010-01-11   27.221758  \n2010-01-12   26.912110  \n2010-01-13   27.291720  \n2010-01-14   27.133657  \n2010-01-15   26.680198  \n2010-01-19   27.860485  \n2010-01-20   27.431644  \n2010-01-21   26.957455  \n2010-01-22   25.620401  \n2010-01-25   26.309658  \n2010-01-26   26.681494  \n2010-01-27   26.932840  \n2010-01-28   25.819922  \n2010-01-29   24.883208  \n2010-02-01   25.229131  \n2010-02-02   25.375533  \n2010-02-03   25.812149  \n2010-02-04   24.881912  \n2010-02-05   25.323710  \n2010-02-08   25.150100  \n2010-02-09   25.418289  \n2010-02-10   25.279660  \n2010-02-11   25.739595  \n2010-02-12   25.961142  \n2010-02-16   26.352412  \n...                ...  \n2017-01-10  118.595819  \n2017-01-11  119.233055  \n2017-01-12  118.735214  \n2017-01-13  118.526121  \n2017-01-17  119.481976  \n2017-01-18  119.472017  \n2017-01-19  119.262925  \n2017-01-20  119.481976  \n2017-01-23  119.561633  \n2017-01-24  119.452107  \n2017-01-25  121.353858  \n2017-01-26  121.413604  \n2017-01-27  121.423555  \n2017-01-30  121.104937  \n2017-01-31  120.826147  \n2017-02-01  128.194203  \n2017-02-02  127.975152  \n2017-02-03  128.522781  \n2017-02-06  129.727549  \n2017-02-07  130.962201  \n2017-02-08  131.469994  \n2017-02-09  132.419998  \n2017-02-10  132.119995  \n2017-02-13  133.289993  \n2017-02-14  135.020004  \n2017-02-15  135.509995  \n2017-02-16  135.350006  \n2017-02-17  135.720001  \n2017-02-21  136.699997  \n2017-02-22  137.110001  \n\n[1797 rows x 6 columns], \u0027IBM\u0027:                   Open        High         Low       Close    Volume  \\\nDate                                                                   \n2010-01-04  131.179993  132.970001  130.850006  132.449997   6155300   \n2010-01-05  131.679993  131.850006  130.100006  130.850006   6841400   \n2010-01-06  130.679993  131.490005  129.809998  130.000000   5605300   \n2010-01-07  129.869995  130.250000  128.910004  129.550003   5840600   \n2010-01-08  129.070007  130.919998  129.050003  130.850006   4197200   \n2010-01-11  131.059998  131.059998  128.669998  129.479996   5730400   \n2010-01-12  129.029999  131.330002  129.000000  130.509995   8081500   \n2010-01-13  130.389999  131.119995  129.160004  130.229996   6455400   \n2010-01-14  130.550003  132.710007  129.910004  132.309998   7111800   \n2010-01-15  132.029999  132.889999  131.089996  131.779999   8494400   \n2010-01-19  131.630005  134.250000  131.559998  134.139999  13916200   \n2010-01-20  130.460007  131.149994  128.949997  130.250000  15197500   \n2010-01-21  130.470001  130.690002  128.059998  129.000000   9608600   \n2010-01-22  128.669998  128.889999  125.370003  125.500000  10088600   \n2010-01-25  126.330002  126.889999  125.709999  126.120003   5738500   \n2010-01-26  125.919998  127.750000  125.410004  125.750000   7135300   \n2010-01-27  125.820000  126.959999  125.040001  126.330002   8719200   \n2010-01-28  127.029999  127.040001  123.050003  123.750000   9622200   \n2010-01-29  124.320000  125.000000  121.900002  122.389999  11571200   \n2010-02-01  123.230003  124.949997  122.779999  124.669998   7242900   \n2010-02-02  124.790001  125.809998  123.949997  125.529999   5899900   \n2010-02-03  125.160004  126.070000  125.070000  125.660004   4177100   \n2010-02-04  125.190002  125.440002  122.900002  123.000000   9126900   \n2010-02-05  123.040001  123.720001  121.830002  123.519997   8617000   \n2010-02-08  123.150002  123.220001  121.739998  121.879997   5718500   \n2010-02-09  122.650002  124.199997  122.459999  123.209999   6044500   \n2010-02-10  122.940002  123.650002  122.209999  122.809998   5219100   \n2010-02-11  122.580002  124.199997  122.059998  123.730003   5089000   \n2010-02-12  123.010002  124.050003  121.610001  124.000000   8017700   \n2010-02-16  124.910004  125.230003  124.110001  125.230003   6777300   \n...                ...         ...         ...         ...       ...   \n2017-01-10  167.979996  168.089996  165.339996  165.520004   4118700   \n2017-01-11  166.050003  167.759995  165.600006  167.750000   3599500   \n2017-01-12  167.770004  168.009995  165.559998  167.949997   2927500   \n2017-01-13  167.970001  168.479996  166.880005  167.339996   2875400   \n2017-01-17  166.690002  168.179993  166.119995  167.889999   3315700   \n2017-01-18  167.449997  168.589996  166.690002  166.800003   4007800   \n2017-01-19  166.960007  167.449997  165.800003  166.809998   6963400   \n2017-01-20  167.809998  170.639999  166.000000  170.550003  12690000   \n2017-01-23  170.080002  171.250000  170.009995  171.029999   5478200   \n2017-01-24  171.360001  176.000000  171.160004  175.899994   6952400   \n2017-01-25  176.259995  179.250000  176.130005  178.289993   5922500   \n2017-01-26  178.059998  178.880005  177.509995  178.660004   3063900   \n2017-01-27  178.470001  179.199997  177.300003  177.300003   3482300   \n2017-01-30  176.979996  177.070007  174.580002  175.800003   4094800   \n2017-01-31  175.050003  175.580002  173.610001  174.520004   4139000   \n2017-02-01  175.000000  175.699997  172.889999  174.289993   2795700   \n2017-02-02  174.229996  174.970001  173.550003  174.580002   2620500   \n2017-02-03  175.000000  176.339996  174.889999  175.820007   3309300   \n2017-02-06  175.309998  175.979996  174.380005  175.860001   2650800   \n2017-02-07  176.000000  178.619995  175.899994  178.460007   3873500   \n2017-02-08  177.500000  177.500000  175.880005  176.169998   2913100   \n2017-02-09  176.169998  177.800003  175.910004  177.210007   3090700   \n2017-02-10  177.369995  178.869995  176.759995  178.679993   2930700   \n2017-02-13  179.240005  179.899994  178.839996  179.360001   3093400   \n2017-02-14  178.570007  180.130005  178.350006  180.130005   2567900   \n2017-02-15  180.199997  181.919998  179.809998  181.679993   2875400   \n2017-02-16  181.449997  182.789993  180.869995  181.429993   3237400   \n2017-02-17  181.250000  181.570007  180.000000  180.669998   3478100   \n2017-02-21  180.600006  180.789993  179.119995  180.259995   4346700   \n2017-02-22  180.089996  181.339996  180.089996  181.149994   3013500   \n\n             Adj Close  \nDate                    \n2010-01-04  111.405000  \n2010-01-05  110.059232  \n2010-01-06  109.344283  \n2010-01-07  108.965786  \n2010-01-08  110.059232  \n2010-01-11  108.906903  \n2010-01-12  109.773245  \n2010-01-13  109.537735  \n2010-01-14  111.287245  \n2010-01-15  110.841458  \n2010-01-19  112.826478  \n2010-01-20  109.554561  \n2010-01-21  108.503173  \n2010-01-22  105.559289  \n2010-01-25  106.080779  \n2010-01-26  105.769566  \n2010-01-27  106.257412  \n2010-01-28  104.087347  \n2010-01-29  102.943437  \n2010-02-01  104.861166  \n2010-02-02  105.584521  \n2010-02-03  105.693870  \n2010-02-04  103.456514  \n2010-02-05  103.893889  \n2010-02-08  102.972982  \n2010-02-09  104.096663  \n2010-02-10  103.758713  \n2010-02-11  104.536000  \n2010-02-12  104.764113  \n2010-02-16  105.803308  \n...                ...  \n2017-01-10  164.221522  \n2017-01-11  166.434024  \n2017-01-12  166.632452  \n2017-01-13  166.027237  \n2017-01-17  166.572925  \n2017-01-18  165.491479  \n2017-01-19  165.501396  \n2017-01-20  169.212061  \n2017-01-23  169.688291  \n2017-01-24  174.520082  \n2017-01-25  176.891332  \n2017-01-26  177.258440  \n2017-01-27  175.909108  \n2017-01-30  174.420876  \n2017-01-31  173.150918  \n2017-02-01  172.922712  \n2017-02-02  173.210445  \n2017-02-03  174.440723  \n2017-02-06  174.480403  \n2017-02-07  177.060012  \n2017-02-08  176.169998  \n2017-02-09  177.210007  \n2017-02-10  178.679993  \n2017-02-13  179.360001  \n2017-02-14  180.130005  \n2017-02-15  181.679993  \n2017-02-16  181.429993  \n2017-02-17  180.669998  \n2017-02-21  180.259995  \n2017-02-22  181.149994  \n\n[1797 rows x 6 columns], \u0027MSFT\u0027:                  Open       High        Low      Close     Volume  Adj Close\nDate                                                                        \n2010-01-04  30.620001  31.100000  30.590000  30.950001   38409100  25.555485\n2010-01-05  30.850000  31.100000  30.639999  30.959999   49749600  25.563741\n2010-01-06  30.879999  31.080000  30.520000  30.770000   58182400  25.406859\n2010-01-07  30.629999  30.700001  30.190001  30.450001   50559700  25.142634\n2010-01-08  30.280001  30.879999  30.240000  30.660000   51197400  25.316031\n2010-01-11  30.709999  30.760000  30.120001  30.270000   68754700  24.994007\n2010-01-12  30.150000  30.400000  29.910000  30.070000   65912100  24.828866\n2010-01-13  30.260000  30.520000  30.010000  30.350000   51863500  25.060064\n2010-01-14  30.309999  31.100000  30.260000  30.959999   63228100  25.563741\n2010-01-15  31.080000  31.240000  30.709999  30.860001   79913200  25.481172\n2010-01-19  30.750000  31.240000  30.680000  31.100000   46575700  25.679340\n2010-01-20  30.809999  30.940001  30.309999  30.590000   54849500  25.258232\n2010-01-21  30.610001  30.719999  30.000000  30.010000   73086700  24.779325\n2010-01-22  30.000000  30.200001  28.840000  28.959999  102004600  23.912336\n2010-01-25  29.240000  29.660000  29.100000  29.320000   63373000  24.209590\n2010-01-26  29.200001  29.850000  29.090000  29.500000   66639900  24.358216\n2010-01-27  29.350000  29.820000  29.020000  29.670000   63949500  24.498586\n2010-01-28  29.840000  29.870001  28.889999  29.160000  117513700  24.077477\n2010-01-29  29.900000  29.920000  27.660000  28.180000  193888500  23.268290\n2010-02-01  28.389999  28.480000  27.920000  28.410000   85931100  23.458201\n2010-02-02  28.370001  28.500000  28.139999  28.459999   54413700  23.499485\n2010-02-03  28.260000  28.790001  28.120001  28.629999   61397900  23.639855\n2010-02-04  28.379999  28.500000  27.809999  27.840000   77850000  22.987551\n2010-02-05  28.000000  28.280001  27.570000  28.020000   80960100  23.136177\n2010-02-08  28.010000  28.080000  27.570000  27.719999   52820600  22.888466\n2010-02-09  27.969999  28.340000  27.750000  28.010000   59195800  23.127920\n2010-02-10  28.030001  28.240000  27.840000  27.990000   48591300  23.111406\n2010-02-11  27.930000  28.400000  27.700001  28.120001   65993700  23.218748\n2010-02-12  27.809999  28.059999  27.580000  27.930000   81117200  23.061864\n2010-02-16  28.129999  28.370001  28.020000  28.350000   51935600  23.518124\n...               ...        ...        ...        ...        ...        ...\n2017-01-10  62.730000  63.070000  62.279999  62.619999   18593000  62.242653\n2017-01-11  62.610001  63.230000  62.430000  63.189999   21517300  62.809218\n2017-01-12  63.060001  63.400002  61.950001  62.610001   20968200  62.232715\n2017-01-13  62.619999  62.869999  62.349998  62.700001   19422300  62.322172\n2017-01-17  62.680000  62.700001  62.029999  62.529999   20664000  62.153195\n2017-01-18  62.669998  62.700001  62.119999  62.500000   19670100  62.123377\n2017-01-19  62.240002  62.980000  62.200001  62.299999   18451700  61.924581\n2017-01-20  62.669998  62.820000  62.369999  62.740002   30213500  62.361932\n2017-01-23  62.700001  63.119999  62.570000  62.959999   23097600  62.580604\n2017-01-24  63.200001  63.740002  62.939999  63.520000   24672900  63.137231\n2017-01-25  63.950001  64.099998  63.450001  63.680000   23672700  63.296267\n2017-01-26  64.120003  64.540001  63.549999  64.269997   43554600  63.882708\n2017-01-27  65.389999  65.910004  64.889999  65.779999   44818000  65.383610\n2017-01-30  65.690002  65.790001  64.800003  65.129997   31651400  64.737526\n2017-01-31  64.860001  65.150002  64.260002  64.650002   25270500  64.260423\n2017-02-01  64.360001  64.620003  63.470001  63.580002   39671500  63.196871\n2017-02-02  63.250000  63.410000  62.750000  63.169998   45827000  62.789338\n2017-02-03  63.500000  63.700001  63.070000  63.680000   30301800  63.296267\n2017-02-06  63.500000  63.650002  63.139999  63.639999   19796400  63.256507\n2017-02-07  63.740002  63.779999  63.230000  63.430000   20277200  63.047773\n2017-02-08  63.570000  63.810001  63.220001  63.340000   18096400  62.958315\n2017-02-09  63.520000  64.440002  63.320000  64.059998   22644400  63.673974\n2017-02-10  64.250000  64.300003  63.980000  64.000000   18170700  63.614338\n2017-02-13  64.239998  64.860001  64.129997  64.720001   22920100  64.330000\n2017-02-14  64.410004  64.720001  64.019997  64.570000   23065900  64.570000\n2017-02-15  64.500000  64.570000  64.160004  64.529999   16917000  64.529999\n2017-02-16  64.739998  65.239998  64.440002  64.519997   20524700  64.519997\n2017-02-17  64.470001  64.690002  64.300003  64.620003   21234600  64.620003\n2017-02-21  64.610001  64.949997  64.449997  64.489998   19384900  64.489998\n2017-02-22  64.330002  64.389999  64.050003  64.360001   19259700  64.360001\n\n[1797 rows x 6 columns]}\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1487894008684_966298505",
+      "id": "20170223-185328_130934668",
+      "dateCreated": "Feb 23, 2017 6:53:28 PM",
+      "dateStarted": "Feb 23, 2017 6:54:08 PM",
+      "dateFinished": "Feb 23, 2017 6:54:08 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\nreturns.tail()",
+      "user": "anonymous",
+      "dateUpdated": "Feb 23, 2017 6:52:21 PM",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python"
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "                AAPL      GOOG       IBM      MSFT\nDate                                              \n2017-02-15  0.003629 -0.001792  0.008605 -0.000619\n2017-02-16 -0.001181  0.006325 -0.001376 -0.000155\n2017-02-17  0.002734  0.004744 -0.004189  0.001550\n2017-02-21  0.007221  0.004335 -0.002269 -0.002012\n2017-02-22  0.002999 -0.001082  0.004937 -0.002016\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1487893902564_-286748753",
+      "id": "20170223-185142_1224138238",
+      "dateCreated": "Feb 23, 2017 6:51:42 PM",
+      "dateStarted": "Feb 23, 2017 6:52:21 PM",
+      "dateFinished": "Feb 23, 2017 6:52:21 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\nprint(returns.MSFT.corr(returns.IBM))\nreturns.MSFT.cov(returns.IBM)",
+      "user": "anonymous",
+      "dateUpdated": "Feb 23, 2017 6:58:38 PM",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python"
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "0.495153778023\n8.5977652563835441e-05\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1487893941538_422020018",
+      "id": "20170223-185221_1613163140",
+      "dateCreated": "Feb 23, 2017 6:52:21 PM",
+      "dateStarted": "Feb 23, 2017 6:58:38 PM",
+      "dateFinished": "Feb 23, 2017 6:58:39 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\nprint(returns.corr())\nreturns.cov()",
+      "user": "anonymous",
+      "dateUpdated": "Feb 23, 2017 6:59:57 PM",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python"
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "          AAPL      GOOG       IBM      MSFT\nAAPL  1.000000  0.409541  0.381549  0.388972\nGOOG  0.409541  1.000000  0.402872  0.470820\nIBM   0.381549  0.402872  1.000000  0.495154\nMSFT  0.388972  0.470820  0.495154  1.000000\n          AAPL      GOOG       IBM      MSFT\nAAPL  0.000270  0.000105  0.000075  0.000093\nGOOG  0.000105  0.000244  0.000075  0.000107\nIBM   0.000075  0.000075  0.000144  0.000086\nMSFT  0.000093  0.000107  0.000086  0.000210\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1487894318957_-837543901",
+      "id": "20170223-185838_1628687396",
+      "dateCreated": "Feb 23, 2017 6:58:38 PM",
+      "dateStarted": "Feb 23, 2017 6:59:57 PM",
+      "dateFinished": "Feb 23, 2017 6:59:57 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\nprint(returns.corrwith(returns.IBM))\nreturns.corrwith(volume)",
+      "user": "anonymous",
+      "dateUpdated": "Feb 23, 2017 7:07:53 PM",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python"
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "AAPL    0.381549\nGOOG    0.402872\nIBM     1.000000\nMSFT    0.495154\ndtype: float64\nAAPL   -0.074323\nGOOG   -0.009670\nIBM    -0.194432\nMSFT   -0.091017\ndtype: float64\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1487894352530_-488329817",
+      "id": "20170223-185912_161079519",
+      "dateCreated": "Feb 23, 2017 6:59:12 PM",
+      "dateStarted": "Feb 23, 2017 7:07:53 PM",
+      "dateFinished": "Feb 23, 2017 7:07:53 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%pyspark\n",
+      "user": "anonymous",
+      "dateUpdated": "Feb 23, 2017 7:07:53 PM",
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1487894873251_1582167123",
+      "id": "20170223-190753_420433288",
+      "dateCreated": "Feb 23, 2017 7:07:53 PM",
       "status": "READY",
       "progressUpdateIntervalMs": 500
     }
   ],
-  "name": "Jan26Cap",
-  "id": "2C6JECAC6",
+  "name": "Lab_feb23",
+  "id": "2CBC2VCK1",
   "angularObjects": {
-    "2C84TGF2U:shared_process": [],
-    "2C83RNHUA:shared_process": [],
-    "2C8HCDMC9:shared_process": [],
-    "2C92474RD:shared_process": [],
-    "2C9NH5C57:shared_process": [],
-    "2C8CTMNEJ:2C6JECAC6": [],
-    "2C6P9EPHC:shared_process": [],
-    "2CAAEN7Q6:shared_process": [],
-    "2CADZRJBA:shared_process": [],
-    "2CA8EJF2R:shared_process": [],
-    "2C85PBFBC:shared_process": [],
-    "2C9RCYVZE:shared_process": [],
-    "2C9APBZHJ:shared_process": [],
-    "2CA11V4ZW:shared_process": [],
-    "2C6JX9ZK9:shared_process": [],
-    "2C8KKRDYW:shared_process": [],
-    "2C7AFWPNH:shared_process": [],
-    "2C9PSME9Q:shared_process": []
+    "2CBT92NCW:shared_process": [],
+    "2C93HXU5P:shared_process": [],
+    "2CBNQ6XZR:shared_process": [],
+    "2CAFG23YE:shared_process": [],
+    "2C9M3G39W:shared_process": [],
+    "2C8W5GH9T:shared_process": [],
+    "2CAVQV2J4:shared_process": [],
+    "2CATPAD4A:shared_process": [],
+    "2CBKZSVWZ:shared_process": [],
+    "2C8TXDMV9:shared_process": [],
+    "2C9H73EYD:shared_process": [],
+    "2CA3VTVCH:shared_process": [],
+    "2CACE14BJ:shared_process": [],
+    "2CB8U1GH5:shared_process": [],
+    "2CA8HC69Y:shared_process": [],
+    "2CAS8QBA7:shared_process": [],
+    "2C8S56UJT:shared_process": [],
+    "2CC1DMD9G:shared_process": [],
+    "2CB4DEF2N:shared_process": []
   },
   "config": {},
   "info": {}
